@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_1player"
+            android:icon="@drawable/ic_baseline_filter_1_24"
+            android:title="@string/menu_1player" />
+        <item
+            android:id="@+id/nav_2player"
+            android:icon="@drawable/ic_baseline_filter_2_24"
+            android:title="@string/menu_2player" />
+        <item
+            android:id="@+id/nav_3player"
+            android:icon="@drawable/ic_baseline_filter_3_24"
+            android:title="@string/menu_3player" />
+        <item
+            android:id="@+id/nav_4player"
+            android:icon="@drawable/ic_baseline_filter_4_24"
+            android:title="@string/menu_4player" />
+        <item
+            android:id="@+id/nav_token"
+            android:icon="@drawable/ic_baseline_miscellaneous_services_24"
+            android:title="@string/menu_token" />
+        <item
+            android:id="@+id/nav_preset"
+            android:icon="@drawable/ic_baseline_settings_24"
+            android:title="@string/menu_preset" />
+    </group>
+</menu>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_1player">
+
+    <fragment
+        android:id="@+id/nav_1player"
+        android:name="com.example.myapplication.ui.1player.FirstFragment"
+        android:label="@string/menu_1player"
+        tools:layout="@layout/fragment_first" />
+
+    <fragment
+        android:id="@+id/nav_2player"
+        android:name="com.example.myapplication.ui.2player.SecondFragment"
+        android:label="@string/menu_2player"
+        tools:layout="@layout/fragment_second" />
+
+    <fragment
+        android:id="@+id/nav_3player"
+        android:name="com.example.myapplication.ui.3player.ThirdFragment"
+        android:label="@string/menu_3player"
+        tools:layout="@layout/fragment_third" />
+
+    <fragment
+        android:id="@+id/nav_4player"
+        android:name="com.example.myapplication.ui.4player.FourthFragment"
+        android:label="@string/menu_4player"
+        tools:layout="@layout/fragment_fourth" />
+
+    <fragment
+        android:id="@+id/nav_token"
+        android:name="com.example.myapplication.ui.4player.FourthFragment"
+        android:label="@string/menu_token"
+        tools:layout="@layout/tokenwindow" />
+
+    <fragment
+        android:id="@+id/nav_preset"
+        android:name="com.example.myapplication.ui."
+        android:label="@string/menu_preset"
+        tools:layout="@layout/activity_presets" />
+
+
+
+</navigation>
