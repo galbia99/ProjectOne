@@ -6,94 +6,126 @@ import android.content.SharedPreferences
 import android.database.Cursor
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.ContactsContract
+import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CursorAdapter
-import android.widget.EditText
-import android.widget.ListView
-import android.widget.TextView
+import android.widget.*
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import com.example.myapplication.R
 import com.example.myapplication.ui.db.DBM
+import com.example.sticazzi.DataContainer
 
-class PresetEditor : AppCompatActivity() {
+class PresetEditor: Fragment() {
     var adapter:CursorAdapter?=null
-    var PreID:Int=0
-    val dbm: DBM =DBM(this)
-    override fun onCreate(savedInstanceState: Bundle?) {
+    var PreID:Int?=0
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_preset_editor)
-        adapter=fetchContent()
+        val v= inflater.inflate(R.layout.activity_preset_editor,container,false)
+        var bt=v.findViewById<Button>(R.id.button3)
+        bt.setOnClickListener { AddNewToken(bt) }
+        bt=v.findViewById<Button>(R.id.button4)
+        bt.setOnClickListener { Save(bt) }
+        bt=v.findViewById<Button>(R.id.button6)
+        bt.setOnClickListener { setPreset(bt) }
+        bt=v.findViewById<Button>(R.id.button7)
+        bt.setOnClickListener { Delete(bt) }
+
+        return v
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        adapter=fetchContent()
+    }
     fun fetchContent():CursorAdapter?
     {
+        val dbm = DBM(this.requireContext())
+        val rt=this.requireView()
+        PreID=DataContainer.PreIDtmp
+        val list: ListView =rt.findViewById(R.id.TeCList)
 
-        PreID=intent.getLongExtra("PresetName",-1).toInt()
-        val list: ListView =findViewById(R.id.TeCList)
-        val crs: Cursor? = dbm.query1(PreID)
-        adapter= object: CursorAdapter(this, crs,0)
-        {
-            override fun newView(context: Context?, cursor: Cursor?, parent: ViewGroup?): View {
-                val v: View = layoutInflater.inflate(R.layout.list2_row, parent,false)
-                return v
-            }
+        val crs: Cursor? = dbm.query1(PreID!!)
 
-            override fun bindView(view: View?, context: Context?, cursor: Cursor?) {
-                if (cursor != null) {
+            Log.d("asd", crs?.count.toString())
+            val adapter = object : CursorAdapter(this.requireContext(), crs, 0) {
+                override fun newView(context: Context?, cursor: Cursor?, parent: ViewGroup?): View {
+                    val v = layoutInflater.inflate(R.layout.list2_row, parent, false)
+                    val bt = v.findViewById<Button>(R.id.button)
+                    bt.setOnClickListener { editToken(bt) }
+                    if(crs==null||cursor?.getString(crs.getColumnIndex("NAME"))==null)
+                        bt.isClickable=false
+                    return v
+                }
 
-                    var txt : TextView? = findViewById(R.id.Title)
+                override fun bindView(view: View?, context: Context?, cursor: Cursor?) {
+                    if (cursor != null) {
+
+                        var txt: TextView? = rt.findViewById(R.id.Title)
                         txt?.text = cursor.getString(crs?.getColumnIndex("TITLE")!!)
-                    txt=view?.findViewById(R.id.NoT)
-                    txt?.text = cursor.getString(crs.getColumnIndex("NAME"))
-                    /*txt=findViewById(R.id.countnum)
+
+                        txt = view?.findViewById(R.id.NoT)
+                        txt?.text = cursor.getString(crs.getColumnIndex("NAME"))
+                        /*txt=findViewById(R.id.countnum)
                     txt.text=cursor.getString(crs.getColumnIndex("CCOUNT"))+"counters"*/
                     }
 
-            }
+                }
 
-        }
-        list.adapter=adapter
-        return adapter
+            }
+            list.adapter = adapter
+
+            return adapter
+
+
     }
     fun editToken(v: View)
     {
-        val PreID=getIntent().getLongExtra("PresetName",-1).toInt()
-        val intent= Intent(this,TokenEditor::class.java)
-        intent.putExtra("PresetID", PreID)
-        intent.putExtra("Caller",1)
-        val position = findViewById<ListView>(R.id.TeCList).getPositionForView(v)
+        val PreID=DataContainer.PreID
+        DataContainer.TokenIsNew=false
+        val position = this.view?.findViewById<ListView>(R.id.TeCList)?.getPositionForView(v)
         if(adapter==null) println("no adpater")
-        val TokeID = adapter?.getItemId(position)
-        intent.putExtra("TokenID", TokeID?.toInt())
-        startActivity(intent)
+        val TokeID = adapter?.getItemId(position!!)?.toInt()
+        DataContainer.TokeID=TokeID
+        val controller=findNavController()
+        controller.navigate(R.id.tokenEditor)
+
     }
     fun AddNewToken(v:View)
     {
-        val PreID=getIntent().getLongExtra("PresetName",-1).toInt()
-        val intent = Intent(this,TokenEditor::class.java)
-        intent.putExtra("PresetID",PreID)
-        intent.putExtra("Caller",0)
-        startActivity(intent)
+        DataContainer.TokenIsNew=true
+        findNavController().navigate(R.id.tokenEditor)
     }
     fun Save(v:View)
     {
-        dbm.savePre(findViewById<EditText>(R.id.Title).text.toString(),PreID)
-        finish()
+        val dbm = DBM(this.requireContext())
+        dbm.savePre(this.requireView().findViewById<EditText>(R.id.Title).text.toString(), PreID!!)
+        this.parentFragmentManager.popBackStack(null,FragmentManager.POP_BACK_STACK_INCLUSIVE)
     }
     fun Delete(v:View)
     {
-        dbm.deletepre(PreID)
-        finish()
+        val dbm = DBM(this.requireContext())
+        dbm.deletepre(PreID!!)
+        this.parentFragmentManager.popBackStack(null,FragmentManager.POP_BACK_STACK_INCLUSIVE)
     }
     override fun onResume() {
         super.onResume()
-
-        adapter?.changeCursor(dbm.query1(PreID))
+        val dbm = DBM(this.requireContext())
+        adapter?.changeCursor(dbm.query1(PreID!!))
     }
 
     fun setPreset(v:View)
     {
-        val pref = getSharedPreferences("Preset",0).edit()
-        pref.putInt("PreID",PreID)
+        val pref = requireActivity().getSharedPreferences("Preset",0).edit()
+        pref.putInt("PreID",PreID!!)
+        this.parentFragmentManager.popBackStack(null,FragmentManager.POP_BACK_STACK_INCLUSIVE)
     }
 }

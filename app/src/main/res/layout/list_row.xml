@@ -17,7 +17,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tokenum"
         app:layout_constraintTop_toBottomOf="@+id/set_Name"
-        android:layout_marginRight="4dp" />
+        android:layout_marginRight="4dp"
+        android:gravity="center_horizontal" />
 
     <TextView
         android:id="@+id/set_Name"
@@ -29,7 +30,8 @@
         android:textSize="36sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:gravity="center_horizontal" />
 
     <TextView
         android:id="@+id/tokenum"
@@ -40,14 +42,14 @@
         android:textSize="24sp"
         app:layout_constraintEnd_toStartOf="@+id/countnum"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/set_Name" />
+        app:layout_constraintTop_toBottomOf="@+id/set_Name"
+        android:gravity="center_horizontal" />
 
     <Button
         android:id="@+id/EditPreset"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="#00FFFFFF"
-        android:onClick="onClick"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/tokenum"
         app:layout_constraintEnd_toEndOf="parent"

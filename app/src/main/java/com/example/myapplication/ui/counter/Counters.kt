@@ -5,24 +5,34 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.database.Cursor
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.EditText
-import android.widget.ListView
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.example.myapplication.R
 import com.example.myapplication.ui.db.DBM
 import com.google.android.material.snackbar.Snackbar
 
-class Counters : AppCompatActivity() {
+class Counters : Fragment() {
     var counters:ArrayList<Counter> = Holder.counterList
     private var adapter:ArrayAdapter<Counter>?=null
     var presetID=-1
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.counterslayout)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+         super.onCreateView(inflater, container, savedInstanceState)
+        val v = inflater.inflate(R.layout.counterslayout,container,false)
+        val bt=v.findViewById<Button>(R.id.button13)
+        bt.setOnClickListener { newCtr(bt) }
+        return v
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         if(counters.count()==0) {
             Holder.counterList = populateArray()
             counters = Holder.counterList
@@ -32,10 +42,10 @@ class Counters : AppCompatActivity() {
 
     fun populateArray():ArrayList<Counter>
     {
-        val dbm= DBM(this)
+        val dbm= DBM(requireContext())
         var crs: Cursor? = null
         try {
-            val pref = getSharedPreferences("Preset", 0)
+            val pref = requireActivity().getSharedPreferences("Preset", 0)
             presetID = pref.getInt("PreID", 1)
             crs=dbm.query3(presetID)
         }
@@ -59,9 +69,9 @@ class Counters : AppCompatActivity() {
         return list
     }
     fun Update() {
-        val dbm = DBM(this)
-        val list: ListView = findViewById(R.id.CList)
-        adapter = object : ArrayAdapter<Counter>(this,0,counters) {
+        val dbm = DBM(requireContext())
+        val list: ListView = requireView().findViewById(R.id.CList)
+        adapter = object : ArrayAdapter<Counter>(requireContext(),0,counters) {
             override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
                 val ctr= counters[position]
                 var v: View? = convertView
@@ -72,6 +82,12 @@ class Counters : AppCompatActivity() {
                 txt?.text= ctr.name.toString()
                 txt=v?.findViewById(R.id.valueView2)
                 txt?.text= ctr.value.toString()
+                var bt = v?.findViewById<Button>(R.id.button12)
+                bt?.setOnClickListener { onClickdec(bt!!) }
+                bt = v?.findViewById<Button>(R.id.button11)
+                bt?.setOnClickListener { onClickinc(bt) }
+                val ibt = v?.findViewById<ImageView>(R.id.imageView)
+                ibt?.setOnClickListener { onClickdelete(ibt)}
                 return v!!
             }
         }
@@ -80,12 +96,12 @@ class Counters : AppCompatActivity() {
     fun newCtr(view: View)
     {
         val v : View= layoutInflater.inflate(R.layout.dialoguetextfrag,null)
-        val dg = AlertDialog.Builder(this)
+        val dg = AlertDialog.Builder(requireContext())
                 .setTitle("Pick a Name")
                 .setView(v)
                 .setPositiveButton("OK", DialogInterface.OnClickListener{ dialog, id ->
                     val s = v.findViewById<EditText>(R.id.editTextTextPersonName).text.toString()
-                    val dbm=DBM(this)
+                    val dbm=DBM(requireContext())
                     dbm.saveCnt(s,presetID)
                     Holder.counterList=populateArray()
                     counters=Holder.counterList
@@ -97,7 +113,7 @@ class Counters : AppCompatActivity() {
     }
     fun onClickinc(v:View)
     {
-        val position = findViewById<ListView>(R.id.CList).getPositionForView(v)
+        val position = requireView().findViewById<ListView>(R.id.CList).getPositionForView(v)
         if(adapter==null) println("no adpater")
         println(position)
         counters[position].value+=1
@@ -105,7 +121,7 @@ class Counters : AppCompatActivity() {
     }
     fun onClickdec(v:View)
     {
-        val position = findViewById<ListView>(R.id.CList).getPositionForView(v)
+        val position = requireView().findViewById<ListView>(R.id.CList).getPositionForView(v)
 
         val PreID = adapter?.getItemId(position)
         if(counters[position].value>0)
@@ -115,16 +131,16 @@ class Counters : AppCompatActivity() {
         }
         else
         {
-            val notokenerror = Snackbar.make(findViewById(R.id.mla),"value can't become negative", Snackbar.LENGTH_SHORT)
+            val notokenerror = Snackbar.make(requireView().findViewById(R.id.mla),"value can't become negative", Snackbar.LENGTH_SHORT)
             notokenerror.show()
         }
 
     }
     fun onClickdelete(v:View)
     {
-        val position = findViewById<ListView>(R.id.CList).getPositionForView(v)
+        val position = requireView().findViewById<ListView>(R.id.CList).getPositionForView(v)
         if(adapter==null) println("no adpater")
-        val db = DBM(this)
+        val db = DBM(requireContext())
         db.deleteCnt(counters[position].name)
         Holder.counterList=populateArray()
         counters=Holder.counterList

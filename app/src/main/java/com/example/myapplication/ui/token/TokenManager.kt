@@ -4,38 +4,72 @@ import android.content.Intent
 import android.database.Cursor
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import com.example.myapplication.R
 import com.example.myapplication.ui.counter.Counters
 import com.example.myapplication.ui.db.DBM
+import com.example.sticazzi.DataContainer
 import com.google.android.material.snackbar.Snackbar
 import java.lang.Exception
+import javax.xml.datatype.DatatypeConfigurationException
 
-class TokenManager : AppCompatActivity() {
+class TokenManager : Fragment() {
     var TokenIndex = 0
-    var tokens:ArrayList<Token> =  ArrayList()
-    override fun onCreate(savedInstanceState: Bundle?) {
+    lateinit var tokenlist:ArrayList<Token>
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.tokenwindow)
-        tokens=LoadTokenArray()
+        val v = inflater.inflate(R.layout.tokenwindow,container,false)
+        var ibt=v.findViewById<ImageButton>(R.id.imageButton3)
+        ibt.setOnClickListener { AddNewToken(ibt) }
+        ibt=v.findViewById(R.id.imageButton)
+        ibt.setOnClickListener { DeleteToken(ibt) }
+
+        var bt=v.findViewById<Button>(R.id.Next)
+        bt.setOnClickListener { right(bt) }
+        bt=v.findViewById(R.id.Prev)
+        bt.setOnClickListener { left(bt) }
+        bt=v.findViewById(R.id.button9)
+        bt.setOnClickListener { tap(bt) }
+        bt=v.findViewById(R.id.button10)
+        bt.setOnClickListener { untap(bt) }
+
+
+        return v
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        tokenlist = DataContainer.tokens
+        if(tokenlist.isEmpty()){tokenlist=LoadTokenArray()}
         Update(TokenIndex,true)
+
     }
 
 
-    fun AddNewToken (view: View)
+    fun AddNewToken (v: View)
     {
-        val UCount: TextView = findViewById(R.id.UCount1)
+        val UCount: TextView = requireView().findViewById(R.id.UCount1)
         val count = UCount.text.toString().toInt()+1
         UCount.text=count.toString()
-        println(count)
+
         //UCount.text=count.toString()
     }
-    fun DeleteToken (view: View)
+    fun DeleteToken (v: View)
     {
-        val notokenerror = Snackbar.make(findViewById(R.id.mlo), R.string.notokenerror, Snackbar.LENGTH_SHORT)
-        val UCount: TextView = findViewById(R.id.UCount1)
-        val TCount: TextView = findViewById(R.id.TCount)
+        val notokenerror = Snackbar.make(requireView().findViewById(R.id.mlo), R.string.notokenerror, Snackbar.LENGTH_SHORT)
+        val UCount: TextView = requireView().findViewById(R.id.UCount1)
+        val TCount: TextView = requireView().findViewById(R.id.TCount)
         if(UCount.text.toString().toInt()>0) {
             val count = UCount.text.toString().toInt() - 1
             UCount.text=count.toString()
@@ -49,25 +83,12 @@ class TokenManager : AppCompatActivity() {
             notokenerror.show()
         }
     }
-    //TEMPORARY
-    fun callTestActivity(v :View)
-    {
-        val intent = Intent(this, Counters::class.java)
-        startActivity(intent)
-    }
-
-    fun testQuery(v: View)
-    {
-        val db = DBM(this)
-        val crs=db.query1(0)
-        println(crs?.getString(crs.getColumnIndex("TITLE")))
-    }
     fun LoadTokenArray():ArrayList<Token>
     {
-        val dbm= DBM(this)
+        val dbm= DBM(requireContext())
         var crs: Cursor? = null
         try {
-            val pref = getSharedPreferences("Preset", 0)
+            val pref = requireActivity().getSharedPreferences("Preset", 0)
             val preset = pref.getInt("PreID", 1)
             crs=dbm.query1(preset)
         }
@@ -91,27 +112,28 @@ class TokenManager : AppCompatActivity() {
     }
     fun Update(tind:Int,load:Boolean)
     {
-        val namev:TextView=findViewById(R.id.Name1)
-        val tcntv:TextView=findViewById(R.id.TCount)
-        val ucntv:TextView=findViewById(R.id.UCount1)
-        namev.text= tokens.get(tind).name!!
+        val namev:TextView=requireView().findViewById(R.id.Name1)
+        val tcntv:TextView=requireView().findViewById(R.id.TCount)
+        val ucntv:TextView= requireView().findViewById(R.id.UCount1)
+        namev.text= tokenlist.get(tind).name!!
         if(load)
         {
-            tcntv.text= tokens[tind].Tcount.toString()
-            ucntv.text=tokens[tind].Ucount.toString()
+            tcntv.text= tokenlist[tind].Tcount.toString()
+            ucntv.text=tokenlist[tind].Ucount.toString()
         }
         else
         {
-            tokens[tind].Ucount=ucntv.text.toString().toInt()
-            tokens[tind].Tcount=tcntv.text.toString().toInt()
+            tokenlist[tind].Ucount=ucntv.text.toString().toInt()
+            tokenlist[tind].Tcount=tcntv.text.toString().toInt()
         }
 
     }
 
     fun tap(v:View)
     {
-        val Ubox=findViewById<TextView>(R.id.UCount1)
-        val Tbox=findViewById<TextView>(R.id.TCount)
+        println(tokenlist[TokenIndex+1].Ucount)
+        val Ubox=requireView().findViewById<TextView>(R.id.UCount1)
+        val Tbox=requireView().findViewById<TextView>(R.id.TCount)
 
         if(Ubox.text.toString().toInt()>0)
         {
@@ -120,14 +142,14 @@ class TokenManager : AppCompatActivity() {
         }
         else
         {
-            val error=Snackbar.make(findViewById(R.id.mlo), "There are no untapped tokens to tap", Snackbar.LENGTH_SHORT)
+            val error=Snackbar.make(requireView().findViewById(R.id.mlo), "There are no untapped tokenlist to tap", Snackbar.LENGTH_SHORT)
             error.show()
         }
     }
     fun untap(v:View)
     {
-        val Ubox=findViewById<TextView>(R.id.UCount1)
-        val Tbox=findViewById<TextView>(R.id.TCount)
+        val Ubox=requireView().findViewById<TextView>(R.id.UCount1)
+        val Tbox=requireView().findViewById<TextView>(R.id.TCount)
         if(Tbox.text.toString().toInt()>0)
         {
             Ubox.text = (Ubox.text.toString().toInt() + 1).toString()
@@ -135,13 +157,15 @@ class TokenManager : AppCompatActivity() {
         }
         else
         {
-            val error=Snackbar.make(findViewById(R.id.mlo), "There are no tapped tokens to untap", Snackbar.LENGTH_SHORT)
+            val error=Snackbar.make(requireView().findViewById(R.id.mlo), "There are no tapped tokenlist to untap", Snackbar.LENGTH_SHORT)
             error.show()
         }
     }
     fun left(v:View)
     {
-        val max = tokens.size-1
+        val size=tokenlist.size
+        val max = size-1
+
         Update(TokenIndex,false)
         if(TokenIndex>0)
             TokenIndex-=1
@@ -149,13 +173,29 @@ class TokenManager : AppCompatActivity() {
             TokenIndex=max
         Update(TokenIndex,true)
     }
+    fun right(v:View)
+    {
+        val max = tokenlist.size-1
+        Update(TokenIndex,false)
+        if(TokenIndex<max)
+            TokenIndex+=1
+        else
+            TokenIndex=0
+        Update(TokenIndex,true)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        DataContainer.tokens=tokenlist
+    }
+
 override fun onResume()
 {
     super.onResume()
-    tokens= LoadTokenArray()
-    if(TokenIndex >= tokens.size)
+    tokenlist= LoadTokenArray()
+    if(TokenIndex >= tokenlist.size)
     {
-        TokenIndex=tokens.size-1
+        TokenIndex=tokenlist.size-1
     }
 }
 }

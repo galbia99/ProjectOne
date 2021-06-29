@@ -31,16 +31,29 @@
 
     <fragment
         android:id="@+id/nav_token"
-        android:name="com.example.myapplication.ui.4player.FourthFragment"
+        android:name="com.example.myapplication.ui.token.TokenManager"
         android:label="@string/menu_token"
         tools:layout="@layout/tokenwindow" />
 
     <fragment
         android:id="@+id/nav_preset"
-        android:name="com.example.myapplication.ui."
+        android:name="com.example.myapplication.ui.token.Presets"
         android:label="@string/menu_preset"
         tools:layout="@layout/activity_presets" />
-
-
+    <fragment
+        android:id="@+id/presetEditor"
+        android:name="com.example.myapplication.ui.token.PresetEditor"
+        android:label="Preset Editor"
+        tools:layout="@layout/activity_preset_editor" />
+    <fragment
+        android:id="@+id/tokenEditor"
+        android:name="com.example.myapplication.ui.token.TokenEditor"
+        android:label="Token Editor"
+        tools:layout="@layout/activity_token_editor" />
+    <fragment
+        android:id="@+id/counters"
+        android:name="com.example.myapplication.ui.counter.Counters"
+        android:label="Counters"
+        tools:layout="@layout/counterslayout" />
 
 </navigation>

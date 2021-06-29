@@ -7,77 +7,79 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.database.Cursor
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CursorAdapter
-import android.widget.EditText
-import android.widget.ListView
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentContainer
+import androidx.navigation.fragment.findNavController
 import com.example.myapplication.R
 import com.example.myapplication.ui.db.DBM
+import com.example.sticazzi.DataContainer
 import java.util.zip.Inflater
 
 
-class Presets : AppCompatActivity() {
+class Presets : Fragment() {
    var adapter:CursorAdapter?=null
-     val dbm: DBM =DBM(this)
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_presets)
-         adapter = fetchPresets()
+        val v=inflater.inflate(R.layout.activity_presets,container,false)
+        val bt=v.findViewById<Button>(R.id.button5)
+        bt.setOnClickListener { newPre(bt) }
+        return v
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        adapter = fetchPresets()
     }
 
     fun fetchPresets():CursorAdapter?
     {
-
-        val list:ListView=findViewById(R.id.LstView)
+        val dbm: DBM =DBM(this.requireContext())
+        val list:ListView= this.requireView().findViewById(R.id.LstView)
         val crs: Cursor? = dbm.query()
-        val adapter:CursorAdapter = object: CursorAdapter(this, crs,0)
+        val adapter:CursorAdapter = object: CursorAdapter(this.requireContext(), crs,0)
         {
             override fun newView(context: Context?, cursor: Cursor?, parent: ViewGroup?): View {
-                val v: View = layoutInflater.inflate(R.layout.list_row, parent,false)
-                //val hld : ViewHolder = v.findViewById(R.id.set_Name)
-                //v.tag = hld
-                    return v
+                val v= layoutInflater.inflate(R.layout.list_row, parent,false)
+                val bt=v.findViewById<Button>(R.id.EditPreset)
+                bt.setOnClickListener { EditPre(bt) }
+                return v
             }
 
             override fun bindView(view: View?, context: Context?, cursor: Cursor?) {
                 if (cursor != null) {
-
-                    //val holder : ViewHolder = view?.getTag() as ViewHolder
                     val txt : TextView? = view?.findViewById(R.id.set_Name)
                     if(txt!=null) {
                         txt.text = cursor.getString(crs?.getColumnIndex("TITLE")!!)
-                        /*   txt=findViewById(R.id.tokenum)
-                    txt.text=cursor.getString(crs.getColumnIndex("TCOUNT"))+"tokens"
-                    txt=findViewById(R.id.countnum)
-                    txt.text=cursor.getString(crs.getColumnIndex("CCOUNT"))+"counters"*/
                     }}
 
             }
 
         }
+
         list.adapter=adapter
         return adapter
     }
-    fun onClick(v:View)
+    public fun EditPre(v:View)
     {
-        val intent= Intent(this,PresetEditor::class.java)
-        val position = findViewById<ListView>(R.id.LstView).getPositionForView(v)
+        val position = this.requireView().findViewById<ListView>(R.id.LstView).getPositionForView(v)
         if(adapter==null) println("no adpater")
         val PreID = adapter?.getItemId(position)
-        println(PreID)
-        intent.putExtra("PresetName",PreID)
-        println("preclick",)
-        startActivity(intent)
+        DataContainer.PreIDtmp=PreID?.toInt()
+        Log.d("preID=",PreID.toString())
+        findNavController().navigate(R.id.presetEditor)
     }
     fun newPre(view: View)
     {
+        val dbm: DBM =DBM(this.requireContext())
         val v : View= layoutInflater.inflate(R.layout.dialoguetextfrag,null)
-        val dg =AlertDialog.Builder(this)
+        val dg =AlertDialog.Builder(this.requireContext())
                 .setTitle("Pick a Name")
                 .setView(v)
                 .setPositiveButton("OK",DialogInterface.OnClickListener{dialog, id ->
@@ -89,6 +91,7 @@ class Presets : AppCompatActivity() {
     }
      override fun onResume() {
          super.onResume()
+         val dbm: DBM =DBM(this.requireContext())
          adapter?.changeCursor(dbm.query())
      }
 
