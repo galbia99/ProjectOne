@@ -45,7 +45,7 @@ class Counters : Fragment() {
         val dbm= DBM(requireContext())
         var crs: Cursor? = null
         try {
-            val pref = requireActivity().getSharedPreferences("Preset", 0)
+            val pref = requireContext().getSharedPreferences("Preset", 0)
             presetID = pref.getInt("PreID", 1)
             crs=dbm.query3(presetID)
         }

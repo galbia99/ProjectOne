@@ -124,8 +124,11 @@ class PresetEditor: Fragment() {
 
     fun setPreset(v:View)
     {
-        val pref = requireActivity().getSharedPreferences("Preset",0).edit()
+        val pref = requireContext().getSharedPreferences("Preset",0).edit()
         pref.putInt("PreID",PreID!!)
+        pref.commit()
+        val pref1 =requireContext().getSharedPreferences("Preset",0)
+        println(pref1.getInt("PreID",-1))
         this.parentFragmentManager.popBackStack(null,FragmentManager.POP_BACK_STACK_INCLUSIVE)
     }
 }

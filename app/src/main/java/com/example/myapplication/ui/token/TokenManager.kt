@@ -88,8 +88,9 @@ class TokenManager : Fragment() {
         val dbm= DBM(requireContext())
         var crs: Cursor? = null
         try {
-            val pref = requireActivity().getSharedPreferences("Preset", 0)
+            val pref = requireContext().getSharedPreferences("Preset", 0)
             val preset = pref.getInt("PreID", 1)
+            println(pref.getInt("PreID",1))
             crs=dbm.query1(preset)
         }
         catch(e:Exception)
