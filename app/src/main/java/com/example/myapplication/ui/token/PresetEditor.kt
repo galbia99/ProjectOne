@@ -1,12 +1,8 @@
 package com.example.myapplication.ui.token
 
 import android.content.Context
-import android.content.Intent
-import android.content.SharedPreferences
 import android.database.Cursor
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.ContactsContract
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.myapplication.R
 import com.example.myapplication.ui.db.DBM
@@ -50,7 +45,7 @@ class PresetEditor: Fragment() {
     {
         val dbm = DBM(this.requireContext())
         val rt=this.requireView()
-        PreID=DataContainer.PreIDtmp
+        PreID=DataContainer.PreID
         val list: ListView =rt.findViewById(R.id.TeCList)
 
         val crs: Cursor? = dbm.query1(PreID!!)
@@ -108,13 +103,13 @@ class PresetEditor: Fragment() {
     {
         val dbm = DBM(this.requireContext())
         dbm.savePre(this.requireView().findViewById<EditText>(R.id.Title).text.toString(), PreID!!)
-        this.parentFragmentManager.popBackStack(null,FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        this.parentFragmentManager.popBackStack()
     }
     fun Delete(v:View)
     {
         val dbm = DBM(this.requireContext())
         dbm.deletepre(PreID!!)
-        this.parentFragmentManager.popBackStack(null,FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        this.parentFragmentManager.popBackStack()
     }
     override fun onResume() {
         super.onResume()
@@ -129,6 +124,7 @@ class PresetEditor: Fragment() {
         pref.commit()
         val pref1 =requireContext().getSharedPreferences("Preset",0)
         println(pref1.getInt("PreID",-1))
-        this.parentFragmentManager.popBackStack(null,FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        DataContainer.tokens= ArrayList()
+        this.parentFragmentManager.popBackStack()
     }
 }

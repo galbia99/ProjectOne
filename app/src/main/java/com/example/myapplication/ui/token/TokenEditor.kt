@@ -1,17 +1,14 @@
 package com.example.myapplication.ui.token
 
 import android.database.Cursor
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.CursorAdapter
 import android.widget.EditText
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentContainer
 import com.example.myapplication.R
 import com.example.myapplication.ui.db.DBM
 import com.example.sticazzi.DataContainer
@@ -54,7 +51,7 @@ class TokenEditor : Fragment() {
         val str:Int?=requireView().findViewById<EditText>(R.id.editTextNumber2).text.toString().toInt()
         val cons:Int?=requireView().findViewById<EditText>(R.id.editTextNumber3).text.toString().toInt()
         val Img:String?=requireView().findViewById<EditText>(R.id.editTextTextPersonName3).text.toString()
-        val PresID = DataContainer.PreIDtmp!!
+        val PresID = DataContainer.PreID!!
         if(!DataContainer.TokenIsNew)
         {
 

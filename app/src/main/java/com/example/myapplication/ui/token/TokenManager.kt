@@ -15,6 +15,7 @@ import com.example.myapplication.R
 import com.example.myapplication.ui.counter.Counters
 import com.example.myapplication.ui.db.DBM
 import com.example.sticazzi.DataContainer
+import com.example.sticazzi.Token
 import com.google.android.material.snackbar.Snackbar
 import java.lang.Exception
 import javax.xml.datatype.DatatypeConfigurationException
@@ -51,7 +52,7 @@ class TokenManager : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         tokenlist = DataContainer.tokens
-        if(tokenlist.isEmpty()){tokenlist=LoadTokenArray()}
+        if(tokenlist.isEmpty()){ tokenlist=LoadTokenArray() }
         Update(TokenIndex,true)
 
     }
@@ -132,7 +133,7 @@ class TokenManager : Fragment() {
 
     fun tap(v:View)
     {
-        println(tokenlist[TokenIndex+1].Ucount)
+
         val Ubox=requireView().findViewById<TextView>(R.id.UCount1)
         val Tbox=requireView().findViewById<TextView>(R.id.TCount)
 
@@ -193,14 +194,12 @@ class TokenManager : Fragment() {
 override fun onResume()
 {
     super.onResume()
-    tokenlist= LoadTokenArray()
+    tokenlist=DataContainer.tokens
+    if(tokenlist.isEmpty())
+        tokenlist= LoadTokenArray()
     if(TokenIndex >= tokenlist.size)
     {
         TokenIndex=tokenlist.size-1
     }
 }
-}
-class Token(val name:String, var Ucount:Int,var Tcount: Int)
-{
-
 }

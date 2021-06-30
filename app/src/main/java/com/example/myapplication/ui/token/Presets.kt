@@ -1,10 +1,8 @@
 package com.example.myapplication.ui.token
 
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
-import android.content.Intent
 import android.database.Cursor
 import android.os.Bundle
 import android.util.Log
@@ -12,15 +10,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentContainer
 import androidx.navigation.fragment.findNavController
 import com.example.myapplication.R
 import com.example.myapplication.ui.db.DBM
 import com.example.sticazzi.DataContainer
-import java.util.zip.Inflater
 
 
 class Presets : Fragment() {
@@ -71,7 +65,7 @@ class Presets : Fragment() {
         val position = this.requireView().findViewById<ListView>(R.id.LstView).getPositionForView(v)
         if(adapter==null) println("no adpater")
         val PreID = adapter?.getItemId(position)
-        DataContainer.PreIDtmp=PreID?.toInt()
+        DataContainer.PreID=PreID?.toInt()
         Log.d("preID=",PreID.toString())
         findNavController().navigate(R.id.presetEditor)
     }
