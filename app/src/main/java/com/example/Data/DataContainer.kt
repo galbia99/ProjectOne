@@ -1,4 +1,4 @@
-package com.example.sticazzi
+package com.example.Data
 
 object DataContainer
 {

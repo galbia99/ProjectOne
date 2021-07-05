@@ -1,8 +1,6 @@
 package com.example.myapplication.ui.token
 
-import android.content.Intent
 import android.database.Cursor
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,13 +10,11 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.myapplication.R
-import com.example.myapplication.ui.counter.Counters
 import com.example.myapplication.ui.db.DBM
-import com.example.sticazzi.DataContainer
-import com.example.sticazzi.Token
+import com.example.Data.DataContainer
+import com.example.Data.Token
 import com.google.android.material.snackbar.Snackbar
 import java.lang.Exception
-import javax.xml.datatype.DatatypeConfigurationException
 
 class TokenManager : Fragment() {
     var TokenIndex = 0
