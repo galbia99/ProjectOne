@@ -75,9 +75,11 @@ class DBM(ctx: Context) {
         db.delete("COUNTERS","DESCRIPTION = '$desc'",null)
     }
     fun deletepre(id:Int){
-        val db=dbh.writableDatabase
-        db.delete("TOKENS","preID=$id",null)
-        db.delete("PRESETS","_id=$id", null)
+        if(id!=1) {
+            val db = dbh.writableDatabase
+            db.delete("TOKENS", "preID=$id", null)
+            db.delete("PRESETS", "_id=$id", null)
+        }
     }
 
     fun deleteToken(id: Int)

@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.myapplication.R
 import com.example.myapplication.ui.db.DBM
 import com.example.sticazzi.DataContainer
@@ -60,13 +61,15 @@ class TokenEditor : Fragment() {
         else {
             db.saveTkn(-1,name, str, cons, Img,PresID)
         }
-        parentFragmentManager.popBackStack()
+        val controller=findNavController()
+        controller.popBackStack()
     }
     fun delete(v: View)
     {
         val db = DBM(requireContext())
         db.deleteToken(ID!!)
-        parentFragmentManager.popBackStack()
+        val controller=findNavController()
+        controller.popBackStack()
     }
 
 

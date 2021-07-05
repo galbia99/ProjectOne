@@ -27,7 +27,7 @@ class DBhelper(context: Context?) :
         cs.put("preID", 1)
         db.insert("COUNTERS",null,cs)
         val cr: ContentValues = ContentValues()
-        cr.put("TITLE","preset1")
+        cr.put("TITLE","Default")
         db.insert("PRESETS",null,cr)
         val ch: ContentValues = ContentValues()
         ch.put("TITLE","preset2")

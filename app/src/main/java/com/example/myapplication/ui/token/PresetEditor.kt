@@ -103,14 +103,15 @@ class PresetEditor: Fragment() {
     {
         val dbm = DBM(this.requireContext())
         dbm.savePre(this.requireView().findViewById<EditText>(R.id.Title).text.toString(), PreID!!)
-        this.parentFragmentManager.popBackStack()
+        val controller=findNavController()
+        controller.popBackStack()
     }
     fun Delete(v:View)
     {
         val dbm = DBM(this.requireContext())
         dbm.deletepre(PreID!!)
-        this.parentFragmentManager.popBackStack()
-    }
+        val controller=findNavController()
+        controller.popBackStack()    }
     override fun onResume() {
         super.onResume()
         val dbm = DBM(this.requireContext())
@@ -125,6 +126,7 @@ class PresetEditor: Fragment() {
         val pref1 =requireContext().getSharedPreferences("Preset",0)
         println(pref1.getInt("PreID",-1))
         DataContainer.tokens= ArrayList()
-        this.parentFragmentManager.popBackStack()
+        val controller=findNavController()
+        controller.popBackStack()
     }
 }
